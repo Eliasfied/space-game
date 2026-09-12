@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d002867a994847d9b5b1a5ae9f9179a4, type: 3}
+  m_Name: 01_Vanguard
+  m_EditorClassIdentifier: Assembly-CSharp::AsterionGame.PlayerClassDefinition
+  classId: vanguard
+  displayName: Vanguard
+  role: STURMSOLDAT / ENERGIEGEWEHR
+  description: "Standfest. Pr\xE4zise. Schwer bewaffnet.\nBrich mit deinem Energiegewehr die Verteidigung des W\xE4chters und rufe einen Orbitalangriff herab."
+  accent: {r: 0.2, g: 0.78, b: 1, a: 1}
+  model: {fileID: 2212822312606451045, guid: 3c4f4a0f5406f4dce8ed166acc8a8b18, type: 3}
+  maximumHealth: 120
+  moveSpeed: 6.3
+  gameplayVisualScale: 1
+  jetpack: 0
+  buildEnergyOnHits: 1
+  loadoutVersion: 1
+  abilities:
+  - {fileID: 11400000, guid: fbcece836ea2946ca9a4a17830f1c15f, type: 2}
+  - {fileID: 11400000, guid: b1dfd472887f74091a57a59d9da96fe3, type: 2}
+  - {fileID: 11400000, guid: 9edb7da69d19945e68d44ec917722a9a, type: 2}
+  - {fileID: 11400000, guid: 1fe359e4941014b02a6d397caf6a02ca, type: 2}
+  - {fileID: 11400000, guid: 9744f8be76a004765a67fec8fcc5b65b, type: 2}
+  - {fileID: 11400000, guid: 7736858997a3f4a60b00651f12ce572a, type: 2}
+  - {fileID: 11400000, guid: 9bd1d25d354b442dd8f6408188800500, type: 2}
+  - {fileID: 11400000, guid: 184070fe95fb444fba60d8147049e88d, type: 2}

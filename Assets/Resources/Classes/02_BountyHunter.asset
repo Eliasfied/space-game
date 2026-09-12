@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d002867a994847d9b5b1a5ae9f9179a4, type: 3}
+  m_Name: 02_BountyHunter
+  m_EditorClassIdentifier: Assembly-CSharp::AsterionGame.PlayerClassDefinition
+  classId: bounty_hunter
+  displayName: Bounty Hunter
+  role: "KOPFGELDJ\xC4GER / ZWEI PISTOLEN"
+  description: 'Zwei Pistolen. Ein Jetpack. Keine Ruhepause.
+
+    Bleibe in Bewegung, setze schnelle Treffer und entkomme Gefahren mit deinem Jet-Schub.'
+  accent: {r: 1, g: 0.56, b: 0.22, a: 1}
+  model: {fileID: 2016603055361639684, guid: e2baeffc471954c9c861ae597a0ed393, type: 3}
+  maximumHealth: 100
+  moveSpeed: 7
+  gameplayVisualScale: 1.2
+  jetpack: 1
+  buildEnergyOnHits: 1
+  loadoutVersion: 5
+  abilities:
+  - {fileID: 11400000, guid: df7b57f90834d40b7a29297e3e01f64d, type: 2}
+  - {fileID: 11400000, guid: 009eae55fc47b449889a9d5e48edd24e, type: 2}
+  - {fileID: 11400000, guid: 03fa2f3c901643ad8cb2e38ed6dbbfd5, type: 2}
+  - {fileID: 11400000, guid: 5b5990eab7514dbc861ad29a5f6f62fb, type: 2}
+  - {fileID: 11400000, guid: e40c35015a884c37902d5f0dbac19e74, type: 2}
+  - {fileID: 11400000, guid: 629d817dc1f2470a886949c4649b59fd, type: 2}
+  - {fileID: 11400000, guid: f5871680e0db4e3586c04dd046543efa, type: 2}
+  - {fileID: 11400000, guid: 3fe0d31e30574a249aa7e703c868aa41, type: 2}

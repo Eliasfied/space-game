@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 22ef3836a93f44d982396f2f74bedd4e, type: 3}
+  m_Name: PulseKick
+  m_EditorClassIdentifier: Assembly-CSharp::AsterionGame.KickAbility
+  cooldown: 7
+  castTime: 0
+  range: 2.1
+  damage: 35
+  energyCost: 0
+  energyOnHit: 8
+  energyFraction: 0
+  channelDuration: 0
+  channelTickInterval: 0.2
+  lockMovement: 0
+  displayName: "Pulse Kick"
+  description: "Kurzer Vorstoß mit Kick. Betäubt getroffene Gegner für 2 Sekunden. +8 Energie pro Treffer."
+  stunDuration: 2
+  dashDistance: 2.1
+  vfxPrefab: {fileID: 0}

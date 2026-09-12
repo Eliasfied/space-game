@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 422e0d8cd51446af84cf846dc91e4754, type: 3}
+  m_Name: VanguardAegisSupplyDrone
+  m_EditorClassIdentifier: Assembly-CSharp::AsterionGame.VanguardAbility
+  displayName: Aegis Supply Drone
+  description: "Drohne auf den Partner unter der Maus, sonst auf dich. 6 Sekunden Schild in H\xF6he von 30% max. HP; 4 Sekunden CC-Immunit\xE4t und Entfernen vorhandener Kontrolleffekte."
+  cooldown: 16
+  castTime: 0
+  range: 20
+  damage: 0
+  energyCost: 20
+  energyOnHit: 0
+  energyFraction: 0
+  channelDuration: 0
+  channelTickInterval: 0.2
+  lockMovement: 0
+  vfxPrefab: {fileID: 0}
+  skill: 3
