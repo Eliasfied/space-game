@@ -4,18 +4,23 @@ namespace AsterionGame {
  public sealed class GrenadeAbility:AbilityDefinition {
   public float radius=2.5f,knockbackDistance;public bool forwardThrow;public Color effectColor=new Color(.2f,1,.72f);
   public float dotDuration,dotDamage,slowFraction;
-  public override bool RequiresTarget=>true;
-  public override bool RequiresGroundPoint=>false;
+  public bool groundTargeted;public float dotEnergyGain;[Range(0,1)]public float dotProcChance;
+  public override bool RequiresTarget=>!groundTargeted;
+  public override bool RequiresGroundPoint=>groundTargeted;
+  public override AbilityAimShape AimShape=>groundTargeted?AbilityAimShape.Circle:AbilityAimShape.None;
+  public override float AimRadius=>radius;
   public override void Execute(AbilityContext c){
    Vector3 point=c.point,origin=c.caster.transform.position+Vector3.up*1.3f;
    if(forwardThrow&&!c.target)point=c.caster.transform.position+c.direction*range;
    point.y=.05f;
    Vector3 path=point+Vector3.up*1.25f-origin;
    if(Physics.Raycast(origin,path.normalized,out RaycastHit hit,path.magnitude,~((1<<8)|(1<<9)),QueryTriggerInteraction.Ignore))point=hit.point-path.normalized*.3f;
-   point.y=.05f;Vector2 flat=Vector2.ClampMagnitude(new Vector2(point.x,point.z),13);point.x=flat.x;point.z=flat.y;
+   point.y=.05f;
+   if(AegisLevel.Instance)point=AegisLevel.Instance.ClampToFloor(point);
+   else{Vector2 flat=Vector2.ClampMagnitude(new Vector2(point.x,point.z),13);point.x=flat.x;point.z=flat.y;}
    var go=GameObject.CreatePrimitive(PrimitiveType.Sphere);go.name="Ion grenade";Destroy(go.GetComponent<Collider>());go.transform.localScale=Vector3.one*.2f;
    go.GetComponent<Renderer>().sharedMaterial=CombatFx.LineMat;var props=new MaterialPropertyBlock();props.SetColor("_BaseColor",effectColor*2);go.GetComponent<Renderer>().SetPropertyBlock(props);
-   go.AddComponent<GrenadeFlight>().Setup(origin,point,this,c.caster,c.direction,c.target);
+   go.AddComponent<GrenadeFlight>().Setup(origin,point,this,c.caster,c.direction,groundTargeted?null:c.target);
   }
  }
  public sealed class GrenadeFlight:MonoBehaviour {
@@ -27,7 +32,7 @@ namespace AsterionGame {
    float t=Mathf.Clamp01((Time.time-born)/.45f);Vector3 position=Vector3.Lerp(start,end,t)+Vector3.up*Mathf.Sin(t*Mathf.PI)*1.5f;
    if(Physics.Linecast(transform.position,position,out RaycastHit hit,~((1<<8)|(1<<9)),QueryTriggerInteraction.Ignore)){end=hit.point;end.y=.05f;t=1;}
    transform.position=position;if(t<1)return;
-   var go=new GameObject("Grenade blast");go.AddComponent<GroundHazard>().Setup(end,ability.radius,.15f,ability.damage,Team.Hostile,ability.effectColor,false,source,ability.energyOnHit,ability.knockbackDistance,direction,ability.dotDuration,ability.dotDamage,ability.slowFraction);Destroy(gameObject);
+   var go=new GameObject("Grenade blast");go.AddComponent<GroundHazard>().Setup(end,ability.radius,.15f,ability.damage,Team.Hostile,ability.effectColor,false,source,ability.energyOnHit,ability.knockbackDistance,direction,ability.dotDuration,ability.dotDamage,ability.slowFraction,ability.dotEnergyGain,ability.dotProcChance);Destroy(gameObject);
   }
  }
 }

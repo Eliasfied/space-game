@@ -3,10 +3,10 @@ using UnityEngine;
 namespace AsterionGame {
  public sealed class GroundHazard:MonoBehaviour {
   public Transform Owner;AbilityCaster source;float energyGain,push;Vector3 pushDirection;
-  float dotDuration,dotDamage,slow;
+  float dotDuration,dotDamage,slow,dotEnergyGain,dotProcChance;
   float radius,delay,damage,born;Team victim;Color color;bool orbital;LineRenderer outline,progress;GameObject fill;
-  public void Setup(Vector3 at,float radius,float delay,float damage,Team victim,Color color,bool orbital=false,AbilityCaster source=null,float energyGain=0,float push=0,Vector3 pushDirection=default,float dotDuration=0,float dotDamage=0,float slow=0){
-   this.dotDuration=dotDuration;this.dotDamage=dotDamage;this.slow=slow;
+  public void Setup(Vector3 at,float radius,float delay,float damage,Team victim,Color color,bool orbital=false,AbilityCaster source=null,float energyGain=0,float push=0,Vector3 pushDirection=default,float dotDuration=0,float dotDamage=0,float slow=0,float dotEnergyGain=0,float dotProcChance=0){
+   this.dotDuration=dotDuration;this.dotDamage=dotDamage;this.slow=slow;this.dotEnergyGain=dotEnergyGain;this.dotProcChance=dotProcChance;
    this.source=source;this.energyGain=energyGain;this.push=push;this.pushDirection=pushDirection;Owner=source?source.transform:null;
    transform.position=at;this.radius=radius;this.delay=delay;this.damage=damage;this.victim=victim;this.color=color;this.orbital=orbital;born=Time.time;
    outline=CombatFx.Ring("Impact boundary",at+Vector3.up*.08f,radius,color,.06f);outline.transform.SetParent(transform);
@@ -18,7 +18,7 @@ namespace AsterionGame {
    var hit=new HashSet<Health>();foreach(var c in Physics.OverlapSphere(transform.position,radius,~0,QueryTriggerInteraction.Ignore)){
     var h=c.GetComponentInParent<Health>();if(h&&h.team==victim&&hit.Add(h)){
      bool damaged=source?CombatShots.Damage(h,damage,source,energyGain):h.ApplyDamage(damage);
-     if(damaged&&dotDuration>0)IonDebuff.Apply(h,source,dotDuration,dotDamage,slow);
+     if(damaged&&dotDuration>0)IonDebuff.Apply(h,source,dotDuration,dotDamage,slow,dotEnergyGain,dotProcChance);
      if(damaged&&push>0)CrowdControl.For(h).Knockback(pushDirection.sqrMagnitude>.01f?pushDirection:h.transform.position-transform.position,push);
     }
    }

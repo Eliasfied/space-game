@@ -13,15 +13,17 @@ MonoBehaviour:
   m_Name: Overdrive
   m_EditorClassIdentifier: Assembly-CSharp::AsterionGame.UltimateAbility
   displayName: Overdrive
-  description: Kanalisiert 4 Sekunden einen verheerenden Strahl auf dein Ziel. Jetpack (2) bricht ab.
+  description: "Richtung waehlen und bestaetigen. Kanalisiert 3 s eine Salve aus beiden Waffen in einen 80-Grad-Kegel (20 m): 15 Wellen mit je 40 Schaden. Ab Kanalstart 15 s lang 30% kuerzere Castzeiten und +50% Lauftempo. Kostet 75 Energie."
   cooldown: 35
   castTime: 0
-  range: 24
-  damage: 80
+  range: 20
+  damage: 40
   energyCost: 0
   energyOnHit: 0
   energyFraction: 0.75
-  channelDuration: 4
+  channelDuration: 3
   channelTickInterval: 0.2
   lockMovement: 1
   vfxPrefab: {fileID: 0}
+  coneAngle: 80
+  buffDuration: 15

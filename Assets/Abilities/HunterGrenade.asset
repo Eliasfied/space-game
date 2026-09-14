@@ -12,20 +12,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fbfe40d9e7ef4309a52149099a8d9ff9, type: 3}
   m_Name: HunterGrenade
   m_EditorClassIdentifier: Assembly-CSharp::AsterionGame.GrenadeAbility
-  cooldown: 10
+  cooldown: 8
   castTime: 0
   range: 13
   damage: 15
-  energyCost: 25
-  energyOnHit: 0
+  energyCost: 0
+  energyOnHit: 3
   energyFraction: 0
   channelDuration: 0
   channelTickInterval: 0.2
   lockMovement: 0
   displayName: "Ion Grenade"
-  description: "Zielgranate: 15 AoE-Schaden, 15 Sekunden lang 6 Schaden/s und 50% Slow. 25 Energie."
+  description: "Boden waehlen und bestaetigen. 15 Flaechenschaden; alle Getroffenen erhalten 15 s lang 6 Ion-Schaden/s und 50% Slow. Jeder Treffer und DoT-Tick erzeugt 3 Energie pro Gegner. Jeder DoT-Tick hat 15% Chance auf Charged Shot: sofort und +20% Schaden."
   radius: 2.6
   vfxPrefab: {fileID: 0}
   dotDuration: 15
   dotDamage: 6
   slowFraction: 0.5
+  groundTargeted: 1
+  dotEnergyGain: 3
+  dotProcChance: 0.15

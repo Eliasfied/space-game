@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="140" viewBox="0 0 128 140"><defs>
+ <linearGradient id="metal" x2=".3" y2="1"><stop stop-color="#a2b7c0"/><stop offset=".18" stop-color="#617681"/><stop offset=".5" stop-color="#34434d"/><stop offset="1" stop-color="#657e88"/></linearGradient>
+ <linearGradient id="panel" x2="0" y2="1"><stop stop-color="#24343e"/><stop offset="1" stop-color="#101c24"/></linearGradient>
+ <linearGradient id="glass" x2=".5" y2="1"><stop stop-color="#294652"/><stop offset="1" stop-color="#111f29"/></linearGradient>
+</defs><path d="M64 2L121 34V106L64 138L7 106V34Z" fill="#050c12" stroke="#040a0f" stroke-width="2"/>
+ <path d="M64 7L117 37V103L64 133L11 103V37Z" fill="url(#metal)" stroke="#acc3cc" stroke-opacity=".4"/>
+ <path d="M64 14L111 41V99L64 126L17 99V41Z" fill="url(#glass)" stroke="#060e15" stroke-width="3"/>
+ <path d="M64 18L107 43V97L64 122L21 97V43Z" fill="none" stroke="#7e9da9" stroke-opacity=".3"/>
+ <path d="M14 42V65M114 75V98" stroke="#8da7b0" stroke-width="2"/></svg>

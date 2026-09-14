@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="100" viewBox="0 0 320 100"><defs>
+ <linearGradient id="metal" x2=".3" y2="1"><stop stop-color="#a2b7c0"/><stop offset=".18" stop-color="#617681"/><stop offset=".5" stop-color="#34434d"/><stop offset="1" stop-color="#657e88"/></linearGradient>
+ <linearGradient id="panel" x2="0" y2="1"><stop stop-color="#24343e"/><stop offset="1" stop-color="#101c24"/></linearGradient>
+ <linearGradient id="glass" x2=".5" y2="1"><stop stop-color="#294652"/><stop offset="1" stop-color="#111f29"/></linearGradient>
+</defs><path d="M9 1H306L319 14V85L305 99H9L1 91V9Z" fill="#050c12" stroke="#050b10"/>
+ <path d="M10 3H305L316 15V84L304 96H10L4 90V10Z" fill="url(#metal)"/>
+ <path d="M12 7H302L312 17V82L301 92H12L8 88V12Z" fill="url(#panel)" stroke="#0b1720"/>
+ <path d="M16 9H71M249 94H300M314 24V42" stroke="#a2bac4" stroke-opacity=".5"/>
+ <path d="M16 16H62V62H16Z" fill="#0e1c26" stroke="#58717c" stroke-width="1"/>
+ <path d="M13 21V15H25M53 63H63V53" fill="none" stroke="#94b2bd" stroke-opacity=".65"/>
+ <path d="M73 43H299" stroke="#506570" stroke-opacity=".55"/></svg>

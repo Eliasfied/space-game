@@ -42,7 +42,7 @@ namespace AsterionGame {
    move=Mathf.MoveTowards(move,desired,Time.deltaTime*5);animator.SetFloat("Move",move);
    bool channel=caster&&caster.ActiveAbility is UltimateAbility;
    bool readyToShoot=caster&&(caster.ActiveAbility is LaserAbility||caster.ActiveAbility is VanguardAbility v&&v.IsWeapon)&&caster.CastRemaining<.18f;
-   bool wantsFire=(Time.time<shootUntil||channel||readyToShoot)&&Time.time>=actionUntil&&!motor.IsDashing;
+   bool wantsFire=(Time.time<shootUntil||channel||readyToShoot)&&Time.time>=actionUntil&&(!motor.IsDashing||motor.IsJetDashing);
    if(fireLayer>=0){
     // Start once, then let the supplied recoil cycle run. Restarting for every
     // rapid projectile would repeatedly show only the first few frames.
@@ -64,7 +64,7 @@ namespace AsterionGame {
    if(died)return;
    if(ability is VanguardAbility weapon&&weapon.IsWeapon){shootUntil=Time.time+.5f;fireWeight=1;if(fireLayer>=0){animator.Play("Weapon fire.Shooting",fireLayer,0);animator.SetLayerWeight(fireLayer,1);}}
    if(ability is LaserAbility){shootUntil=Time.time+Mathf.Max(.4f,ability.cooldown+.06f);fireWeight=1;if(fireLayer>=0)animator.SetLayerWeight(fireLayer,1);}
-   if(ability is ChargedShotAbility)shootUntil=Time.time+.5f;
+   if(ability is ChargedShotAbility||ability is ExplosiveShotAbility)shootUntil=Time.time+.5f;
    if(ability is GrenadeAbility||ability is ShieldAbility||ability is OrbitalAbility||ability is VanguardAbility support&&!support.IsWeapon&&!support.IsMovement){actionUntil=Time.time+.65f;StopFire();animator.CrossFadeInFixedTime("Skill",.075f,0);}
   }
   void OnDestroy(){if(caster)caster.AbilityExecuted-=OnAbility;}

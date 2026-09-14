@@ -12,14 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e273a5fedfa24636965522f2d97244f, type: 3}
   m_Name: TwinPulses
   m_EditorClassIdentifier: Assembly-CSharp::AsterionGame.LaserAbility
-  displayName: Twin Pulses
-  description: "1 Sekunde Cast. Zwei zielverfolgende Sch\xFCsse kurz nacheinander. 20% Chance auf Overcharge: F sofort, ohne eigenen Cooldown und mit 50% mehr Schaden."
+  displayName: "Twin Pulses"
+  description: "1 s Cast. Zwei Schuesse mit je 10 Schaden. Erzeugt 8 Energie pro Cast. 10% Chance, den Cooldown von Pulse Kick zurueckzusetzen."
   cooldown: 0
   castTime: 1
   range: 19
   damage: 10
   energyCost: 0
-  energyOnHit: 3
+  energyOnHit: 0
   energyFraction: 0
   channelDuration: 0
   channelTickInterval: 0.2
@@ -27,3 +27,5 @@ MonoBehaviour:
   vfxPrefab: {fileID: 0}
   twinProjectiles: 1
   beamColor: {r: 1, g: 0.56, b: 0.15, a: 1}
+  energyOnCast: 8
+  kickResetChance: 0.1

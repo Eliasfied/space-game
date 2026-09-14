@@ -5,7 +5,7 @@ namespace AsterionGame {
  public sealed class PlayerTargeting:MonoBehaviour {
   public Health Current{get;private set;}
   readonly List<Health> cycle=new List<Health>();int cycleIndex;
-  PlayerInputReader input;Health owner;LineRenderer ring,ringOutline;readonly LineRenderer[] markers=new LineRenderer[4];
+  PlayerInputReader input;Health owner;GameObject indicator;
   void Awake(){input=GetComponent<PlayerInputReader>();owner=GetComponent<Health>();}
   public static Vector3 Center(Health target){var body=target?target.GetComponent<Collider>():null;return body?body.bounds.center:target?target.transform.position+Vector3.up:Vector3.zero;}
   void Update(){
@@ -19,23 +19,32 @@ namespace AsterionGame {
      var h=hit.collider.GetComponentInParent<Health>();if(h&&h.team==Team.Hostile&&h.Alive)Current=h;
     }
    }
-   if(Current){
-    if(!ring){
-     ringOutline=CombatFx.Ring("Target contrast rim",Vector3.zero,1,new Color(.18f,.005f,.01f),.26f);
-     ring=CombatFx.Ring("Selected target / red",Vector3.zero,1,new Color(2,.025f,.04f),.15f);
-     for(int i=0;i<4;i++){markers[i]=CombatFx.Line("Target bracket",new Color(2,.025f,.04f),.11f);markers[i].positionCount=3;}
-    }
-    var body=Current.GetComponent<Collider>();float radius=body?Mathf.Max(body.bounds.extents.x,body.bounds.extents.z)+.3f:.9f;
-    Vector3 center=new Vector3(Current.transform.position.x,.12f,Current.transform.position.z);
-    CombatFx.SetRing(ringOutline,center-Vector3.up*.025f,radius);CombatFx.SetRing(ring,center,radius);
-    ring.widthMultiplier=.15f+.025f*(.5f+.5f*Mathf.Sin(Time.time*5));
-    for(int i=0;i<4;i++){
-     Vector3 d=Quaternion.Euler(0,i*90+45,0)*Vector3.forward,t=Vector3.Cross(Vector3.up,d);
-     markers[i].SetPosition(0,center+d*(radius+.38f)-t*.22f);
-     markers[i].SetPosition(1,center+d*(radius+.12f));
-     markers[i].SetPosition(2,center+d*(radius+.38f)+t*.22f);
-    }
-   }else ClearMarker();
+  }
+  // Selection runs before ability input; the marker follows after enemies have moved.
+  void LateUpdate(){
+   if(!owner||!owner.Alive||!Current||!Current.Alive||!Current.gameObject.activeInHierarchy){ClearMarker();return;}
+   if(!indicator){CreateMarker();if(!indicator)return;}
+   var body=Current.GetComponent<Collider>();
+   float radius=body?Mathf.Max(body.bounds.extents.x,body.bounds.extents.z)+.38f:1.05f;
+   Vector3 center=body?body.bounds.center:Current.transform.position;
+   center.y=Current.transform.position.y;
+   if(Physics.Raycast(center+Vector3.up,Vector3.down,out var ground,10,~((1<<8)|(1<<9)),QueryTriggerInteraction.Ignore))center.y=ground.point.y;
+   center.y+=.06f;
+   indicator.transform.position=center;
+   indicator.transform.localScale=new Vector3(Mathf.Max(.7f,radius),1,Mathf.Max(.7f,radius));
+  }
+  void CreateMarker(){
+   var shader=Resources.Load<Shader>("TargetSelection");if(!shader)return;
+   indicator=new GameObject("Selected target / ground circle");
+   var mesh=new Mesh{name="Target selection plane"};
+   mesh.vertices=new[]{new Vector3(-1,0,-1),new Vector3(1,0,-1),new Vector3(1,0,1),new Vector3(-1,0,1)};
+   mesh.uv=new[]{Vector2.zero,Vector2.right,Vector2.one,Vector2.up};
+   mesh.triangles=new[]{0,2,1,0,3,2};mesh.RecalculateNormals();mesh.RecalculateBounds();
+   indicator.AddComponent<MeshFilter>().sharedMesh=mesh;
+   var renderer=indicator.AddComponent<MeshRenderer>();
+   var material=new Material(shader);material.SetColor("_BaseColor",new Color(1,.06f,.09f,1));
+   renderer.sharedMaterial=material;renderer.shadowCastingMode=UnityEngine.Rendering.ShadowCastingMode.Off;renderer.receiveShadows=false;
+   var owned=indicator.AddComponent<OwnedResources>();owned.mesh=mesh;owned.material=material;
   }
   bool Available(Health h)=>h&&h.Alive&&h.gameObject.activeInHierarchy&&h.team==Team.Hostile&&(h.transform.position-transform.position).sqrMagnitude<=900;
   void Cycle(){
@@ -49,7 +58,7 @@ namespace AsterionGame {
    while(cycleIndex<cycle.Count){var next=cycle[cycleIndex++];if(Available(next)){Current=next;return;}}
    if(cycle.Count>0){cycle.Clear();Cycle();}else Current=null;
   }
-  void ClearMarker(){if(ring)Destroy(ring.gameObject);if(ringOutline)Destroy(ringOutline.gameObject);foreach(var marker in markers)if(marker)Destroy(marker.gameObject);}
+  void ClearMarker(){if(indicator){indicator.SetActive(false);Destroy(indicator);indicator=null;}}
   void OnDisable(){ClearMarker();}
   void OnDestroy(){ClearMarker();}
  }

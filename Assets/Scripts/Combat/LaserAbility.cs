@@ -3,6 +3,7 @@ namespace AsterionGame {
  [CreateAssetMenu(menuName="Asterion/Abilities/Laser")]
  public sealed class LaserAbility:AbilityDefinition {
   public bool twinProjectiles;
+  [Range(0,1)] public float kickResetChance;
   public Color beamColor=new Color(.12f,.92f,1);
   public override bool RequiresTarget=>true;
   public override void Execute(AbilityContext c){

@@ -6,14 +6,28 @@ namespace AsterionGame {
   BossBrain boss;Health health,target;CrowdControl control;Kind kind;Transform visual;
   EnemyVisualAnimator rig;Health repairTarget;LineRenderer repairBeam;float nextRepair;
   float nextAttack,fireAt,age;Vector3 lockedAim;bool winding;LineRenderer warning;GroundHazard mortar;
+  bool approachGuard,alerted;
   public void Initialize(BossBrain owner,Kind role,Transform chassis){
    boss=owner;kind=role;visual=chassis;health=GetComponent<Health>();target=boss.player.GetComponent<Health>();control=CrowdControl.For(health);
    rig=visual?visual.GetComponentInChildren<EnemyVisualAnimator>():null;repairTarget=boss.GetComponent<Health>();
    health.Died+=Die;control.Stunned+=CancelAttack;nextAttack=Time.time+Random.Range(1f,2f);
   }
+  public void InitializeGuard(Health player,Transform chassis){
+   approachGuard=true;kind=Kind.Rusher;visual=chassis;target=player;health=GetComponent<Health>();control=CrowdControl.For(health);
+   rig=visual?visual.GetComponentInChildren<EnemyVisualAnimator>():null;
+   health.Died+=Die;health.Damaged+=OnGuardHit;control.Stunned+=CancelAttack;nextAttack=Time.time+1;
+  }
+  public void AlertGuard(){if(approachGuard&&health&&health.Alive)alerted=true;}
+  void OnGuardHit(float amount){if(amount>0)AlertPack();}
+  void AlertPack(){AlertGuard();if(AegisLevel.Instance)AegisLevel.Instance.AlertGuardPack();}
   void Update(){
-   if(!boss||!target||!target.Alive||!boss.GetComponent<Health>().Alive){Destroy(gameObject);return;}
+   if(!target||!target.Alive||(!approachGuard&&(!boss||!boss.GetComponent<Health>().Alive))){Destroy(gameObject);return;}
    if(!health.Alive||Time.timeScale==0)return;
+   if(approachGuard&&!alerted){
+    bool guardSight=!Physics.Linecast(transform.position+Vector3.up,target.transform.position+Vector3.up,~((1<<8)|(1<<9)),QueryTriggerInteraction.Ignore);
+    if(health.Current<health.maximum||guardSight&&Vector3.Distance(transform.position,target.transform.position)<8)AlertPack();
+    if(!alerted)return;
+   }
    age+=Time.deltaTime;if(visual&&!rig)visual.localPosition=Vector3.up*Mathf.Sin(age*3)*.06f;
    if(control.IsStunned||control.IsKnockedBack){CancelAttack();return;}
    if(kind==Kind.Repair){Repair();return;}
@@ -46,7 +60,11 @@ namespace AsterionGame {
     if(tangent.sqrMagnitude<.05f)tangent=Vector3.Cross(Vector3.up,direction);
     direction=tangent.normalized;if(!Free(direction,step,out _))return;
    }
-   Vector3 next=transform.position+direction*step;Vector2 flat=Vector2.ClampMagnitude(new Vector2(next.x,next.z),12.3f);next.x=flat.x;next.z=flat.y;transform.position=next;
+   Vector3 next=transform.position+direction*step;
+   if(AegisLevel.Instance){
+    if(!AegisLevel.Instance.InsideFloor(next))return;
+   }else{Vector2 flat=Vector2.ClampMagnitude(new Vector2(next.x,next.z),12.3f);next.x=flat.x;next.z=flat.y;}
+   transform.position=next;
   }
   bool Free(Vector3 direction,float step,out RaycastHit blocker){
    blocker=default;float closest=float.PositiveInfinity;
@@ -74,6 +92,6 @@ namespace AsterionGame {
   }
   void CancelAttack(){StopRepair();if(rig)rig.CancelAction();winding=false;nextAttack=Mathf.Max(nextAttack,Time.time+.6f);if(warning)Destroy(warning.gameObject);if(mortar)Destroy(mortar.gameObject);}
   void Die(){CancelAttack();CombatFx.Burst(transform.position+Vector3.up,CombatFx.Amber,10,.8f);Destroy(gameObject);}
-  void OnDestroy(){CancelAttack();if(health)health.Died-=Die;if(control)control.Stunned-=CancelAttack;}
+  void OnDestroy(){CancelAttack();if(health){health.Died-=Die;health.Damaged-=OnGuardHit;}if(control)control.Stunned-=CancelAttack;}
  }
 }

@@ -26,7 +26,7 @@ namespace AsterionGame {
    if(!motor)return;
    if(!motor.GetComponent<Health>().Alive){lift=0;if(body)body.localPosition=Vector3.zero;foreach(var flame in flames)if(flame)flame.gameObject.SetActive(false);return;}
    float movement=motor.MoveDirection.magnitude;float stride=Mathf.Sin(time*12)*22*movement;
-   lift=Mathf.MoveTowards(lift,motor.IsJetDashing ? .75f : 0,Time.deltaTime*7);
+   lift=Mathf.MoveTowards(lift,motor.IsJetDashing ? .75f : 0,Time.deltaTime*3.5f);
    if(leftLeg)leftLeg.localRotation=leftRest*Quaternion.Euler(motor.IsJetDashing?-20:stride,0,0);
    if(rightLeg)rightLeg.localRotation=rightRest*Quaternion.Euler(Time.time<kickUntil?-75:motor.IsJetDashing?-32:-stride,0,0);
    if(body)body.localPosition=Vector3.up*(lift+(rig?0:Mathf.Abs(Mathf.Sin(time*12))*.045f*movement));

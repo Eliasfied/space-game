@@ -13,12 +13,9 @@ namespace AsterionGame {
   void OnGUI(){
    if(session.IsSelecting)return;
    Init();scale=Screen.height/900f;width=Screen.width/scale;GUI.matrix=Matrix4x4.TRS(Vector3.zero,Quaternion.identity,new Vector3(scale,scale,1));
-   RectFill(0,0,width,3,cyan);Label(35,27,280,28,"T H E  C R U C I B L E",19,paper,true);Label(36,58,300,18,"GLADIATOREN-ARCHE / KAMMER 07",10,muted);
-   RectFill(35,91,3,63,cyan);Label(49,88,240,18,"SIMULATION / REKRUTIERUNG",10,cyan,true);Label(49,111,240,21,brain.Engaged?"Besiege den simulierten Wächter.":"Betritt die Prüfung der Rekrutierungs-KI.",13,paper);Label(49,136,240,18,"ZIEL: HAUPTKERN ERREICHEN",10,muted);
-   Label(width-205,31,170,18,"SYSTEMS ONLINE   •   01",10,cyan,false,TextAnchor.MiddleRight);Label(width-205,55,170,18,System.TimeSpan.FromSeconds(session.Elapsed).ToString(@"mm\:ss")+"  /  FIELD TEST",11,muted,false,TextAnchor.MiddleRight);
+   minimap.Draw(new Rect(width-252,24,228,244),player,boss,caster.Target,session.Elapsed);
    BossBar();Bottom();Floating();DamageMeter();
-   TargetBar();
-   if(caster.IsBusy)CastBar(width/2-220,628,440,32,16);
+   PartyFrames();
    PlayerBars();
    if(Time.time<caster.MessageUntil)Label(width/2-250,596,500,25,caster.Message,12,amber,true,TextAnchor.MiddleCenter);
    if(hitFlash>0){Color c=new Color(1,.15f,.03f,hitFlash*.8f);RectFill(0,0,8,900,c);RectFill(width-8,0,8,900,c);}
@@ -26,38 +23,25 @@ namespace AsterionGame {
    GUI.matrix=Matrix4x4.identity;
   }
   void DamageMeter(){
-   float x=width-301,y=639;
-   RectFill(x,y,266,48,panel);RectFill(x,y,2,48,cyan);
-   Label(x+12,y+4,242,15,"LIVE DAMAGE",10,muted,true);
-   Label(x+12,y+20,242,23,"Overall Damage  "+caster.Statistics.OverallDamage.ToString("N0")+" ("+caster.Statistics.Dps.ToString("0.0")+" DPS)",12,paper,true,TextAnchor.MiddleRight);
-  }
-  void TargetBar(){
-   float x=width/2-245;var target=caster.Target;
-   RectFill(x-18,24,526,91,panel);RectFill(x-18,24,3,91,cyan);
-   if(!target){Label(x,34,490,28,"KEIN ZIEL",15,muted,true);Label(x,76,490,22,"TAB / LINKSKLICK: ZIEL WÄHLEN",11,cyan);return;}
-   var bar=target.GetComponent<EnemyHealthBar>();
-   Label(x,34,426,24,bar?bar.displayName:target.name,15,paper,true);
-   Label(x+426,35,64,20,"ZIEL",11,cyan,false,TextAnchor.MiddleRight);
-   RectFill(x,70,490,8,new Color(.13f,.19f,.2f));
-   RectFill(x,70,490*Mathf.Clamp01(target.Current/Mathf.Max(1,target.maximum)),8,new Color(.93f,.12f,.18f));
-   for(int i=1;i<10;i++)RectFill(x+49*i,70,2,8,panel);
-   var mark=target.GetComponent<VanguardStatus>();
-   if(mark&&(mark.MatrixRemaining>0||mark.ExposedRemaining>0))Label(x,105,490,20,(mark.MatrixRemaining>0?"MATRIX "+Mathf.CeilToInt(mark.MatrixRemaining)+"s   ":"")+(mark.ExposedRemaining>0?"SCHADEN +15% "+Mathf.CeilToInt(mark.ExposedRemaining)+"s":""),10,cyan);
-   var ion=target.GetComponent<IonDebuff>();
-   if(ion)Label(x,86,320,17,"ION / −50%  "+Mathf.CeilToInt(ion.Remaining)+"s",10,new Color(.3f,1,.6f));
-   Label(x+340,86,150,17,Mathf.CeilToInt(target.Current)+" / "+target.maximum.ToString("0"),10,paper,false,TextAnchor.MiddleRight);
+   unitBars.DamageMeter(new Rect(width-272,639,248,60),caster.Statistics.OverallDamage,caster.Statistics.Dps);
   }
   void BossBar(){
-   float x=width-285;RectFill(x,90,250,76,panel);RectFill(x,90,3,76,amber);
-   Label(x+10,93,230,22,"ASTERION / BOSS",12,amber,true);
-   RectFill(x+10,120,230,7,new Color(.13f,.19f,.2f));
-   RectFill(x+10,120,230*Mathf.Clamp01(boss.Current/Mathf.Max(1,boss.maximum)),7,new Color(.93f,.12f,.18f));
-   Label(x+10,132,110,15,Mathf.CeilToInt(boss.Current)+" / "+boss.maximum.ToString("0"),10,paper);
-   Label(x+125,132,115,15,"PHASE 0"+brain.Phase,10,muted,false,TextAnchor.MiddleRight);
-   Label(x+10,149,230,15,brain.Engaged?brain.AttackName:"DORMANT",9,muted);
-   if(brain.Engaged&&brain.AttackProgress>0&&boss.Alive)RectFill(x,166,250*brain.AttackProgress,2,amber);
+   if(!boss||!brain||!brain.Engaged||!boss.Alive||!boss.gameObject.activeInHierarchy||session.Ended)return;
+   var bar=boss.GetComponent<EnemyHealthBar>();
+   float bossWidth=Mathf.Min(560,Mathf.Max(220,width-700));
+   Rect frame=new Rect((width-bossWidth)*.5f,24,bossWidth,55);
+   unitBars.Boss(frame,boss,bar?bar.displayName:"ASTERION",brain.Phase);
+   if(brain.IsCasting)unitBars.Cast(new Rect(frame.x+10,frame.yMax+3,frame.width-20,18),brain.CastName,brain.CastProgress,brain.CastDuration,brain.CastRemaining);
   }
-  readonly SciFiActionBar actionBar=new SciFiActionBar();Energy energy;
+  void PartyFrames(){
+   // UI-only preview data: no dummy actor is added to the combat scene.
+   bool partnerIsVanguard=session.ActiveClass&&session.ActiveClass.jetpack;
+   float partyY=width<1016?660:810;
+   unitBars.PartyMember(new Rect(24,partyY,208,64),"NOVA",partnerIsVanguard?"VANGUARD":"BOUNTY HUNTER",partnerIsVanguard?"aegis-shield":"twin-pulses",840,1000,72,100,partnerIsVanguard?AegisBarRenderer.Cyan:AegisBarRenderer.Gold);
+  }
+  readonly SciFiActionBar actionBar=new SciFiActionBar();
+  readonly AegisMinimap minimap=new AegisMinimap();
+  readonly AegisBarRenderer unitBars=new AegisBarRenderer();Energy energy;
   void Bottom(){if(!energy)energy=player.GetComponent<Energy>();actionBar.Draw(width,player,energy,caster,session.ActiveClass,!session.Paused&&!session.Ended);}
   void OnDestroy(){actionBar.Dispose();}
   void Floating(){
@@ -68,18 +52,9 @@ namespace AsterionGame {
     Vector3 point=Camera.main.WorldToViewportPoint(enemy.WorldPosition+Vector3.up*.4f);
     if(point.z<=0 || point.x<0 || point.x>1 || point.y<0 || point.y>1)continue;
     float x=point.x*width,y=(1-point.y)*900,w=enemy.Health==boss?112:82;
-    RectFill(x-w/2-2,y-2,w+4,10,new Color(.025f,.018f,.022f,.95f));
-    RectFill(x-w/2,y,w,6,new Color(.22f,.035f,.045f));
-    RectFill(x-w/2,y,w*Mathf.Clamp01(enemy.Health.Current/Mathf.Max(1,enemy.Health.maximum)),6,new Color(.93f,.12f,.18f));
+    unitBars.SmallHealth(new Rect(x-w/2,y,w,12),enemy.Health,AegisBarRenderer.Crimson);
     var ion=enemy.GetComponent<IonDebuff>();if(ion)Label(x-70,y-20,140,18,"ION / −50%  "+Mathf.CeilToInt(ion.Remaining)+"s",10,new Color(.3f,1,.6f),false,TextAnchor.MiddleCenter);
    }
-  }
-  void CastBar(float x,float y,float w,float h,int fontSize){
-   RectFill(x-2,y-2,w+4,h+4,new Color(.015f,.035f,.05f,.95f));
-   RectFill(x,y,w,h,new Color(.055f,.13f,.17f,.95f));
-   RectFill(x,y,w*caster.CastProgress,h,new Color(cyan.r*.5f,cyan.g*.5f,cyan.b*.5f,.95f));
-   Label(x+7,y,w-54,h,caster.CastName,fontSize,paper,true);
-   Label(x+w-49,y,42,h,caster.CastRemaining.ToString("0.0")+" s",fontSize,paper,true,TextAnchor.MiddleRight);
   }
   struct StatusBadge {public string text;public Color color;}
   readonly List<StatusBadge> statuses=new List<StatusBadge>();Transform statusVisual,statusHead;
@@ -93,14 +68,24 @@ namespace AsterionGame {
    Vector3 at=statusHead?statusHead.position+Vector3.up*.95f:player.transform.position+Vector3.up*3.55f;
    Vector3 point=Camera.main.WorldToViewportPoint(at);
    if(point.z<=0||point.x<0||point.x>1||point.y<0||point.y>1)return;
-   float x=point.x*width,y=(1-point.y)*900;
-   RectFill(x-57,y-2,114,16,panel);RectFill(x-55,y,110,12,new Color(.035f,.15f,.1f));
-   RectFill(x-55,y,110*Mathf.Clamp01(player.Current/Mathf.Max(1,player.maximum)),12,new Color(.14f,.65f,.4f));
-   Label(x-55,y,110,12,Mathf.CeilToInt(player.Current)+" / "+player.maximum.ToString("0"),9,paper,true,TextAnchor.MiddleCenter);
-   if(caster.IsBusy)CastBar(x-55,y+18,110,17,8);
+   // Small, lightly framed HP bar with its percentage inside the green fill area.
+   float x=Mathf.Clamp(point.x*width,94,width-94),y=Mathf.Max(4,(1-point.y)*900-32);
+   float hpFraction=player.maximum>0?Mathf.Clamp01(player.Current/player.maximum):0;
+   Color hpTint=new Color(.58f,.88f,.4f,.9f);
+   Rect hpRect=new Rect(x-50,y+18,100,14);
+   RectFill(hpRect.x,hpRect.y,hpRect.width,hpRect.height,new Color(.3f,.42f,.3f,.8f));
+   RectFill(x-49,y+19,98,12,new Color(.025f,.065f,.035f,.85f));
+   RectFill(x-49,y+19,98*hpFraction,12,hpTint);
+   if(hpFraction>0)RectFill(x-49,y+19,98*hpFraction,1,new Color(.76f,1,.61f,.8f));
+   string hpPercent=Mathf.RoundToInt(hpFraction*100)+"%";
+   Label(x-48,y+19,98,14,hpPercent,9,new Color(.015f,.04f,.02f,.95f),true,TextAnchor.MiddleCenter);
+   Label(x-49,y+18,98,14,hpPercent,9,new Color(.96f,1,.93f),true,TextAnchor.MiddleCenter);
+   if(caster.IsBusy)unitBars.Cast(new Rect(hpRect.x,hpRect.yMax,hpRect.width,17),caster,true);
    statuses.Clear();
    if(player.DamageReduction>0)Status("SCHILD "+player.ProtectionRemaining.ToString("0.0")+"s",new Color(.3f,.75f,1));
    if(caster.ChargedProc)Status("PROC · "+PlayerInputReader.SlotKeys[caster.ProcSlot],new Color(1,.72f,.16f));
+   if(caster.KickResetReady)Status("KICK · 4",amber);
+   var overdrive=player.GetComponent<HunterOverdrive>();if(overdrive&&overdrive.Remaining>0)Status("OVERDRIVE "+Mathf.CeilToInt(overdrive.Remaining)+"s",amber);
    if(player.Shield>0)Status("AEGIS "+Mathf.CeilToInt(player.Shield),cyan);
    var vanguardStatus=player.GetComponent<VanguardStatus>();
    if(vanguardStatus){if(vanguardStatus.ImmunityRemaining>0)Status("CC IMMUN "+Mathf.CeilToInt(vanguardStatus.ImmunityRemaining)+"s",cyan);if(vanguardStatus.BoostRemaining>0)Status("DMG +30%",amber);}

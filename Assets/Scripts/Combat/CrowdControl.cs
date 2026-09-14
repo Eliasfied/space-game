@@ -28,7 +28,15 @@ namespace AsterionGame {
     if(hit.collider.GetComponentInParent<Health>()==health)continue;float hitDistance=Mathf.Max(0,hit.distance-.04f);if(hitDistance<allowed){allowed=hitDistance;hitWall=!hit.collider.GetComponentInParent<Health>();}
    }
    bool collision=allowed<step-.001f;
-   Vector3 at=transform.position+pushDirection*allowed;Vector2 flat=Vector2.ClampMagnitude(new Vector2(at.x,at.z),Mathf.Max(1,13-radius));bool boundary=Mathf.Abs(at.x-flat.x)>.001f||Mathf.Abs(at.z-flat.y)>.001f;collision|=boundary;hitWall|=boundary;at.x=flat.x;at.z=flat.y;transform.position=at;
+   Vector3 at=transform.position+pushDirection*allowed;
+   bool boundary=false;
+   if(AegisLevel.Instance){
+    if(!AegisLevel.Instance.InsideFloor(at)){at=transform.position;boundary=true;}
+   }else{
+    Vector2 flat=Vector2.ClampMagnitude(new Vector2(at.x,at.z),Mathf.Max(1,13-radius));
+    boundary=Mathf.Abs(at.x-flat.x)>.001f||Mathf.Abs(at.z-flat.y)>.001f;at.x=flat.x;at.z=flat.y;
+   }
+   collision|=boundary;hitWall|=boundary;transform.position=at;
    pushRemaining=collision?0:pushRemaining-step;if(collision&&hitWall&&wallStun>0){float duration=wallStun;wallStun=0;Stun(duration);}
   }
   void OnDestroy(){if(ring)Destroy(ring.gameObject);}

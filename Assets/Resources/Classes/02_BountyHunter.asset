@@ -25,13 +25,13 @@ MonoBehaviour:
   gameplayVisualScale: 1.2
   jetpack: 1
   buildEnergyOnHits: 1
-  loadoutVersion: 5
+  loadoutVersion: 6
   abilities:
   - {fileID: 11400000, guid: df7b57f90834d40b7a29297e3e01f64d, type: 2}
   - {fileID: 11400000, guid: 009eae55fc47b449889a9d5e48edd24e, type: 2}
   - {fileID: 11400000, guid: 03fa2f3c901643ad8cb2e38ed6dbbfd5, type: 2}
   - {fileID: 11400000, guid: 5b5990eab7514dbc861ad29a5f6f62fb, type: 2}
-  - {fileID: 11400000, guid: e40c35015a884c37902d5f0dbac19e74, type: 2}
+  - {fileID: 11400000, guid: 63b57c52a3a0e299773452a2101c4440, type: 2}
   - {fileID: 11400000, guid: 629d817dc1f2470a886949c4649b59fd, type: 2}
   - {fileID: 11400000, guid: f5871680e0db4e3586c04dd046543efa, type: 2}
   - {fileID: 11400000, guid: 3fe0d31e30574a249aa7e703c868aa41, type: 2}

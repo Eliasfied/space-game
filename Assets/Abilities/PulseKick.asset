@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 22ef3836a93f44d982396f2f74bedd4e, type: 3}
   m_Name: PulseKick
   m_EditorClassIdentifier: Assembly-CSharp::AsterionGame.KickAbility
-  cooldown: 7
+  cooldown: 20
   castTime: 0
   range: 2.1
   damage: 35
@@ -23,7 +23,7 @@ MonoBehaviour:
   channelTickInterval: 0.2
   lockMovement: 0
   displayName: "Pulse Kick"
-  description: "Kurzer Vorstoß mit Kick. Betäubt getroffene Gegner für 2 Sekunden. +8 Energie pro Treffer."
+  description: "Richtung waehlen und bestaetigen. Kurzer Vorstoss mit Kick, 35 Schaden, 2 s Betaeubung und 8 Energie pro Treffer. Twin Pulses kann den Cooldown zuruecksetzen."
   stunDuration: 2
   dashDistance: 2.1
   vfxPrefab: {fileID: 0}

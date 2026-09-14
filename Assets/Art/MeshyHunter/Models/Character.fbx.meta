@@ -421,12 +421,12 @@ ModelImporter:
     - name: LeftToeBase
       parentName: LeftFoot
       position: {x: 1.11758706e-10, y: 0.0014241786, z: 7.4505804e-11}
-      rotation: {x: -0.12294445, y: 0.8695419, z: -0.33995202, w: -0.3364734}
+      rotation: {x: -0.12294446, y: 0.8695418, z: -0.33995205, w: -0.3364734}
       scale: {x: 1, y: 0.9999998, z: 1}
     - name: LeftToe_end
       parentName: LeftToeBase
       position: {x: -9.99627e-12, y: 0.0008013848, z: -3.3424357e-11}
-      rotation: {x: 0.044149287, y: -0.3122571, z: 0.9449562, w: 0.08720158}
+      rotation: {x: 0.044149287, y: -0.31225717, z: 0.9449562, w: 0.087201595}
       scale: {x: 1, y: 1, z: 1.0000001}
     - name: RightUpLeg
       parentName: Hips

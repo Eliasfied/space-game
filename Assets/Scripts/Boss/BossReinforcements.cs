@@ -36,7 +36,8 @@ namespace AsterionGame {
   bool ClearSpot(Vector3 at){return Vector3.Distance(at,boss.player.position)>3&&!Physics.CheckCapsule(at+Vector3.up*.55f,at+Vector3.up*1.55f,.5f,~0,QueryTriggerInteraction.Ignore);}
   bool FindSpawn(out Vector3 at){
    for(int i=0;i<30;i++){
-    float angle=Random.Range(0,Mathf.PI*2),radius=Random.Range(7f,11.5f);at=new Vector3(Mathf.Cos(angle)*radius,.08f,Mathf.Sin(angle)*radius);
+    float angle=Random.Range(0,Mathf.PI*2),radius=Random.Range(AegisLevel.Instance?10:7,AegisLevel.Instance?17:11.5f);at=new Vector3(Mathf.Cos(angle)*radius,.08f,Mathf.Sin(angle)*radius+(AegisLevel.Instance?2:0));
+    if(AegisLevel.Instance&&!AegisLevel.Instance.Layout.rooms[0].Contains(at,1))continue;
     if(ClearSpot(at))return true;
    }at=default;return false;
   }

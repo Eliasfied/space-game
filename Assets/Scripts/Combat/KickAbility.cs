@@ -4,6 +4,9 @@ namespace AsterionGame {
  [CreateAssetMenu(menuName="Asterion/Abilities/Forward Kick")]
  public sealed class KickAbility:AbilityDefinition {
   public float stunDuration=2,dashDistance=2.1f;
+  public override AbilityAimShape AimShape=>AbilityAimShape.Dash;
+  public override float AimRadius=>1.15f;
+  public override float AimRange=>dashDistance+1.8f;
   public override void Execute(AbilityContext c){c.caster.GetComponent<PlayerMotor>().DashTowards(c.direction,dashDistance);c.caster.GetComponent<MechAnimator>()?.PlayKick();var kick=c.caster.gameObject.AddComponent<ForwardKick>();kick.Setup(c.direction,damage,stunDuration,energyOnHit,c.caster);}
  }
  public sealed class ForwardKick:MonoBehaviour {

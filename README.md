@@ -2,6 +2,8 @@
 
 Sci-Fi-Bosskampf-Prototyp in Unity URP. Lokaler Einzelspieler-Prototyp mit Vanguard und Bounty Hunter; Multiplayer ist noch nicht implementiert.
 
+Das aktuelle Level beginnt in einem Aegis-Zugangsgang mit drei Wachen. Nach ihrem Tod öffnet sich die Sicherheitstür zur größeren Bosskammer. Modulare Böden, Wände, Türen und Deckungen liegen unter `Assets/Resources/Environment/Aegis`; die Minimap oben rechts zeigt die Umgebung und aktuelle Gegner. Aufbau und Regenerierung sind in [Tools/AEGIS-LEVEL.md](Tools/AEGIS-LEVEL.md) beschrieben.
+
 ## Auf einem anderen Computer weiterarbeiten
 
 1. **Unity 6000.6.0f1** über Unity Hub installieren (genaue Version steht in `ProjectSettings/ProjectVersion.txt`).
@@ -19,11 +21,22 @@ Die Meshy-Editor-Skripte erzeugen/aktualisieren beim Import die Charakter- und G
 
 ## Arbeitsablauf
 
+### Steuerung im Kampf
+
+- **WASD:** Bewegung entlang der festen Kameraausrichtung.
+- **Rechte Maustaste halten + Maus nach links/rechts:** Spieler drehen. Die Kamera behält ihren Winkel und folgt weiterhin der Spielerposition.
+- **Rechte Maustaste + W/S:** vorwärts/rückwärts in Blickrichtung des Spielers; **A/D** bewegt ihn seitwärts, ohne ihn zu drehen.
+- **Q/E:** jederzeit nach links/rechts relativ zur Blickrichtung strafen, auch ohne rechte Maustaste.
+- **Beide Maustasten halten:** vorwärtslaufen; mit der Maus lenken. Solange WASD gedrückt ist, hat die Tastaturrichtung Vorrang (S rückwärts, A/D rein seitwärts, Kombinationen diagonal). Nach dem Loslassen läuft der Spieler wieder per Maus vorwärts. Q/E ergänzt das Mauslaufen weiterhin um seitliches Strafing.
+- **1, 2, 3, 4, 5, F, C, V:** Fähigkeiten. Der zuvor auf Q liegende Spell liegt jetzt auf **5**.
+- **Bounty Hunter:** 3, 4 und V öffnen eine Bodenvorschau; Linksklick bestätigt, Rechtsklick/Esc bricht ab. Explosive Shot (5) feuert direkt auf das ausgewählte Ziel. Details und aktuelle Werte stehen in [Tools/BOUNTY-HUNTER.md](Tools/BOUNTY-HUNTER.md).
+- **Tab / kurzer Linksklick:** Ziel wählen. **Esc:** Pause. **R:** Neustart/Klassenauswahl.
+
 Unity kann beim Bearbeiten offen bleiben. Vor Änderungen Play stoppen, danach Unity kompilieren/importieren lassen und manuell testen.
 
 ```sh
 git status
-git add Assets Packages ProjectSettings
+git add Assets Packages ProjectSettings Tools
 git commit -m "Beschreibe deine Änderungen"
 ```
 

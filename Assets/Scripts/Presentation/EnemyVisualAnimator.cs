@@ -4,13 +4,16 @@ namespace AsterionGame {
  [DefaultExecutionOrder(90)]
  public sealed class EnemyVisualAnimator:MonoBehaviour {
   public Animator animator;public float slamLength=2,strikeLength=1,channelLength=3;
-  Health health;CrowdControl control;Vector3 localPosition,localScale,previousPosition;Quaternion localRotation;
+  Health health;CrowdControl control;Transform bodyAnchor;Vector3 localPosition,localScale,previousPosition;Quaternion localRotation;
   float actionUntil;string state="";bool dead;
   void Awake(){
    if(!animator)animator=GetComponent<Animator>();health=GetComponentInParent<Health>();
    if(health){control=CrowdControl.For(health);health.Died+=Die;control.Stunned+=CancelAction;previousPosition=health.transform.position;}
    localPosition=transform.localPosition;localRotation=transform.localRotation;localScale=transform.localScale;
-   if(animator){animator.applyRootMotion=false;animator.SetFloat("ActionSpeed",1);}
+   if(animator){
+    animator.applyRootMotion=false;animator.SetFloat("ActionSpeed",1);
+    if(health&&health.GetComponent<BossBrain>()&&animator.isHuman)bodyAnchor=animator.GetBoneTransform(HumanBodyBones.Hips);
+   }
   }
   public void Action(string name,float duration){
    if(dead||!animator)return;
@@ -27,8 +30,16 @@ namespace AsterionGame {
    if(Time.time<actionUntil)return;
    Play(speed>.2f?(speed>2.8f?"Run":"Walk"):"Idle");
   }
-  void LateUpdate(){transform.localPosition=localPosition;transform.localRotation=localRotation;transform.localScale=localScale;}
-  void Die(){dead=true;if(animator&&animator.HasState(0,Animator.StringToHash("Base.Death"))){animator.speed=1;animator.CrossFadeInFixedTime("Death",.06f,0,0);}}
+  void LateUpdate(){
+   transform.localPosition=localPosition;transform.localRotation=localRotation;transform.localScale=localScale;
+   if(bodyAnchor&&health&&!dead){
+    // Meshy clips use different body origins. Keep the evaluated torso over the
+    // gameplay capsule, rather than carrying the idle mesh's offset into a run.
+    Vector3 offset=health.transform.position-bodyAnchor.position;offset.y=0;
+    transform.position+=offset;
+   }
+  }
+  void Die(){if(bodyAnchor)localPosition=transform.localPosition;dead=true;if(animator&&animator.HasState(0,Animator.StringToHash("Base.Death"))){animator.speed=1;animator.CrossFadeInFixedTime("Death",.06f,0,0);}}
   void OnDestroy(){if(health)health.Died-=Die;if(control)control.Stunned-=CancelAction;}
  }
 }

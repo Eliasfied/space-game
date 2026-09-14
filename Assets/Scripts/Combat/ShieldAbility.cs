@@ -3,7 +3,18 @@ namespace AsterionGame {
  [CreateAssetMenu(menuName="Asterion/Abilities/Shield")]
  public sealed class ShieldAbility:AbilityDefinition {
   public float duration=3;[Range(0,1)]public float reduction=.25f;
-  public override void Execute(AbilityContext c){c.caster.GetComponent<Health>().Protect(reduction,duration);var fx=c.caster.GetComponent<ShieldVisual>();if(!fx)fx=c.caster.gameObject.AddComponent<ShieldVisual>();fx.Setup(duration);}
+  public bool canTargetAllies;
+  public Health Recipient(AbilityCaster caster){
+   var self=caster.GetComponent<Health>();if(!canTargetAllies||!Camera.main)return self;
+   var input=caster.GetComponent<PlayerInputReader>();
+   if(Physics.Raycast(Camera.main.ScreenPointToRay(input.Pointer),out RaycastHit hit,200,~0,QueryTriggerInteraction.Ignore)){
+    var ally=hit.collider.GetComponentInParent<Health>();
+    if(ally&&ally.team==self.team&&ally.Alive&&Vector3.Distance(self.transform.position,ally.transform.position)<=range&&
+     !Physics.Linecast(self.transform.position+Vector3.up*1.3f,PlayerTargeting.Center(ally),~((1<<8)|(1<<9)),QueryTriggerInteraction.Ignore))return ally;
+   }
+   return self;
+  }
+  public override void Execute(AbilityContext c){var recipient=c.target&&c.target.Alive&&c.target.team==c.caster.GetComponent<Health>().team?c.target:c.caster.GetComponent<Health>();recipient.Protect(reduction,duration);var fx=recipient.GetComponent<ShieldVisual>();if(!fx)fx=recipient.gameObject.AddComponent<ShieldVisual>();fx.Setup(duration);}
  }
  public sealed class ShieldVisual:MonoBehaviour {
   float until,born,hitUntil,height;GameObject bubble;Material material;Health health;

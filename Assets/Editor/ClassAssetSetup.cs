@@ -44,6 +44,7 @@ public static class ClassAssetSetup {
    hunter.loadoutVersion=5;laser.description="1 Sekunde Cast. Zwei zielverfolgende Schüsse kurz nacheinander. 20% Chance auf Overcharge: F sofort, ohne eigenen Cooldown und mit 50% mehr Schaden.";charged.description="Lädt 1,1 Sekunden im Stand auf. Mit Overcharge sofort, ohne eigenen Cooldown und mit 50% mehr Schaden. +15 Energie bei Treffer.";ultimate.description="Kanalisiert 4 Sekunden einen verheerenden Strahl auf dein Ziel. Jetpack (2) bricht ab.";
    EditorUtility.SetDirty(hunter);EditorUtility.SetDirty(laser);EditorUtility.SetDirty(charged);EditorUtility.SetDirty(ultimate);
   }
+  HunterLoadoutSetup.Configure(hunter);
   VanguardLoadoutSetup.Configure(vanguard);
   Bind(vanguard,"Vanguard");Bind(hunter,"BountyHunter");AssetDatabase.SaveAssets();
  }

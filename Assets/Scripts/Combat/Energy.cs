@@ -3,6 +3,9 @@ namespace AsterionGame {
  [RequireComponent(typeof(Health))]
  public sealed class Energy : MonoBehaviour {
   public float maximum=100,regeneration=18,rechargeDelay=.7f;public bool buildOnHits;
+  [Header("HUD")]
+  public string displayName="ENERGIE";
+  public Color displayColor=new Color(1,.74f,.32f);
   public float Current {get;private set;}float rechargeAt;Health health;
   void Awake(){health=GetComponent<Health>();ResetEnergy();}
   public void ResetEnergy(){Current=buildOnHits?0:maximum;rechargeAt=0;}

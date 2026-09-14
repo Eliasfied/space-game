@@ -4,21 +4,18 @@ namespace AsterionGame {
  [RequireComponent(typeof(Camera))]
  public sealed class FollowCamera : MonoBehaviour {
   public Transform target;
-  [Range(5,12)] public float viewSize=7.4f;
+  [Range(5,12)] public float viewSize=8.2f;
   [Range(40,70)] public float pitch=55;
   public float distance=20, smoothing=7, forwardFraming=1.1f;
   [SerializeField,HideInInspector] int perspectiveVersion;
   void Awake(){
-   // Restore the previous camera preset even when the perspective scene is already open.
+   // Upgrade the saved camera preset while keeping its fixed angle and mouse controls.
    if(perspectiveVersion<2){pitch=55;distance=20;viewSize=7.4f;perspectiveVersion=2;}
+   if(perspectiveVersion<3){viewSize=8.2f;perspectiveVersion=3;}
   }
-  public float yaw,mouseSensitivity=.18f;
+  public float yaw;
   public Quaternion Heading=>Quaternion.Euler(0,yaw,0);
-  PlayerInputReader input;
-  void Update(){
-   if(!target)return;if(!input)input=target.GetComponent<PlayerInputReader>();
-   if(input&&input.MouseLookActive){var delta=input.LookDelta;yaw+=delta.x*mouseSensitivity;pitch=Mathf.Clamp(pitch-delta.y*mouseSensitivity,40,70);}
-  }
+  // The camera follows position only. Mouse steering belongs to the player.
   Vector3 center;float shake;Camera view;
   void Start(){view=GetComponent<Camera>();view.orthographic=true;view.orthographicSize=viewSize;if(target)center=FocusPoint();PlaceCamera();}
   Vector3 FocusPoint()=>new Vector3(target.position.x,.65f,target.position.z)+(Heading*Vector3.forward)*forwardFraming;

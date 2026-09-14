@@ -13,13 +13,13 @@ MonoBehaviour:
   m_Name: ChargedShot
   m_EditorClassIdentifier: Assembly-CSharp::AsterionGame.ChargedShotAbility
   displayName: Charged Shot
-  description: "L\xE4dt 1,1 Sekunden im Stand auf. Mit Overcharge sofort, ohne eigenen Cooldown und mit 50% mehr Schaden. +15 Energie bei Treffer."
+  description: "1,5 s Cast im Stand, 180 Schaden, 30 Energie. Ion-Overcharge macht den naechsten Cast sofort und verstaerkt ihn um 20% auf 216 Schaden; er umgeht den eigenen Cooldown. Jetpack ist waehrend des Casts nutzbar."
   cooldown: 7
-  castTime: 1.1
+  castTime: 1.5
   range: 24
   damage: 180
-  energyCost: 0
-  energyOnHit: 15
+  energyCost: 30
+  energyOnHit: 0
   energyFraction: 0
   channelDuration: 0
   channelTickInterval: 0.2
